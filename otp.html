@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify Identity</title>
+    <style>
+        body { margin:0; height:100vh; display:flex; justify-content:center; align-items:center; background: radial-gradient(circle,#0f172a,#020617); font-family:Arial; color:white; }
+        .box { background:#111827; padding:40px; border-radius:15px; width:320px; box-shadow:0 0 20px #eab30833; text-align:center; }
+        input { width:90%; padding:12px; margin:10px 0; border:none; border-radius:8px; background:#1f2937; color:white; text-align:center; font-size:20px; letter-spacing:4px; }
+        button { width:95%; padding:12px; background:#eab308; border:none; color:black; border-radius:8px; cursor:pointer; font-weight:bold; }
+        .timer-box { margin: 15px 0; padding: 10px; background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 8px; }
+        .countdown { font-size: 22px; font-weight: bold; color: #eab308; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2 style="color:#eab308;">OTP Verification</h2>
+        
+        <div class="timer-box">
+            <div>⏱ OTP Expires In</div>
+            <div class="countdown" id="otp-timer">40</div>
+            <div style="font-size:11px; color:#94a3b8;">seconds remaining</div>
+        </div>
+
+        {% if error %}
+            <p style="color:#f87171; font-size:14px;">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST" action="/verify">
+            <input name="otp" placeholder="0000" maxlength="4" required autofocus>
+            <button type="submit" id="verify-btn">Verify Now</button>
+        </form>
+    </div>
+
+    <script>
+        var secs = 40;
+        var el = document.getElementById('otp-timer');
+        var btn = document.getElementById('verify-btn');
+        
+        var iv = setInterval(function(){
+            secs--;
+            if(secs <= 0){ 
+                clearInterval(iv); 
+                el.textContent = "0";
+                btn.disabled = true;
+                btn.style.opacity = "0.4";
+                alert("OTP Expired! Redirecting to login...");
+                window.location.href = "/"; 
+                return; 
+            }
+            el.textContent = secs;
+        }, 1000);
+    </script>
+</body>
+</html>

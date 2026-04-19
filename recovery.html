@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Account Recovery</title>
+    <style>
+        body { margin:0; height:100vh; display:flex; justify-content:center; align-items:center; background: radial-gradient(circle,#0f172a,#020617); font-family:Arial; color:white; }
+        .box { background:#111827; padding:40px; border-radius:15px; width:320px; box-shadow:0 0 20px #06b6d433; text-align:center; }
+        input { width:90%; padding:12px; margin:10px 0; border:none; border-radius:8px; background:#1f2937; color:white; }
+        button { width:95%; padding:12px; background:#06b6d4; border:none; color:white; border-radius:8px; cursor:pointer; font-weight:bold; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        {% if step == 'forgot' %}
+            <h2>🛡 Recovery</h2>
+            <p style="font-size:13px; color:#94a3b8;">Enter email to get reset link</p>
+            <form method="POST">
+                <input name="email" type="email" placeholder="faizach0312@gmail.com" required>
+                <button type="submit">Send Reset Link</button>
+            </form>
+        {% elif step == 'reset' %}
+            <h2>🔐 Reset Password</h2>
+            <form action="/update-password" method="POST">
+                <input type="hidden" name="token" value="{{ token }}">
+                <input name="password" type="password" placeholder="Enter New Password" required>
+                <button type="submit">Update Password</button>
+            </form>
+        {% endif %}
+        <br><a href="/" style="color:#64748b; font-size:12px; text-decoration:none;">← Back to Login</a>
+    </div>
+</body>
+</html>

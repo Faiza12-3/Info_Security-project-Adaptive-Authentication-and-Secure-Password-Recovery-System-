@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure Login</title>
+    <style>
+        body { margin:0; height:100vh; display:flex; justify-content:center; align-items:center; background: radial-gradient(circle,#0f172a,#020617); font-family:Arial; color:white; }
+        .box { background:#111827; padding:40px; border-radius:15px; width:320px; box-shadow:0 0 20px #00f7ff33; text-align:center; }
+        input { width:90%; padding:12px; margin:10px 0; border:none; border-radius:8px; background:#1f2937; color:white; }
+        button { width:95%; padding:12px; background:#06b6d4; border:none; color:white; border-radius:8px; cursor:pointer; font-weight:bold; }
+        button:hover:not(:disabled){ background:#0891b2; }
+        button:disabled{ opacity:0.4; cursor:not-allowed; }
+        .lock-box { margin-bottom:14px; padding:14px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.4); border-radius:10px; font-size:14px; }
+        .lock-box.ip { background:rgba(251,146,60,0.1); border-color:rgba(251,146,60,0.4); }
+        .countdown { font-size:24px; font-weight:bold; color:#f87171; margin:6px 0 2px; }
+        a { color: #0ea5e9; font-size: 13px; text-decoration: none; display: block; margin-top: 20px; }
+    </style>
+</head>
+
+<body>
+<div class="box">
+    <h2>🔐 Secure Login</h2>
+
+    {% if msg %}
+        <p style="color:#10b981; font-size:14px;">{{ msg }}</p>
+    {% endif %}
+
+    {% if error == "invalid" %}
+        <p style="color:#f87171; font-size:14px;">❌ Invalid Login</p>
+        <p style="color:#94a3b8; font-size:12px;">⚠️ Attempts Left: {{ attempts_left }}</p>
+
+    {% elif error == "account_locked" %}
+        <div class="lock-box">
+            <div>🔒 Account Locked</div>
+            <div class="countdown" id="timer">{{ lock_seconds }}</div>
+            <div style="font-size:12px;color:#94a3b8;">sec left to try again</div>
+        </div>
+        <script>
+            var secs = {{ lock_seconds }};
+            var el = document.getElementById('timer');
+            var iv = setInterval(function(){
+                secs--;
+                if(secs <= 0){ clearInterval(iv); window.location.href="/"; return; }
+                el.textContent = secs;
+            }, 1000);
+        </script>
+
+    {% elif error == "suspicious_ip" %}
+        <div class="lock-box ip">
+            <div>🚫 Suspicious IP Blocked</div>
+            <div class="countdown" id="timer">{{ lock_seconds }}</div>
+            <div style="font-size:12px;color:#94a3b8;">sec left to try again</div>
+        </div>
+        <script>
+            var secs = {{ lock_seconds }};
+            var el = document.getElementById('timer');
+            var iv = setInterval(function(){
+                secs--;
+                if(secs <= 0){ clearInterval(iv); window.location.href="/"; return; }
+                el.textContent = secs;
+            }, 1000);
+        </script>
+    {% endif %}
+
+    <form method="POST" action="/login">
+        <input name="username" placeholder="Username" 
+            {% if error in ["account_locked", "suspicious_ip"] %}disabled{% endif %} required>
+        <input name="password" type="password" placeholder="Password" 
+            {% if error in ["account_locked", "suspicious_ip"] %}disabled{% endif %} required>
+        <button {% if error in ["account_locked", "suspicious_ip"] %}disabled{% endif %}>Login</button>
+    </form>
+
+    <a href="/forgot-password">Forgot Password?</a>
+</div>
+</body>
+</html>

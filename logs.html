@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Logs</title>
+
+<style>
+body{
+    background:#0b1220;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+}
+
+table{
+    margin:auto;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:10px;
+    border:1px solid #334155;
+}
+</style>
+</head>
+
+<body>
+
+<h2>⚔ Security Logs</h2>
+
+<table>
+<tr>
+<th>User</th>
+<th>Event</th>
+<th>Time</th>
+</tr>
+
+{% for l in logs %}
+<tr>
+<td>{{ l.user }}</td>
+<td>{{ l.event }}</td>
+<td>{{ l.time }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</body>
+</html>
